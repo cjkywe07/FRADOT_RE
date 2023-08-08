@@ -1,42 +1,29 @@
-import { useRouter } from "next/router";
-import { HeaderDiv, HeaderWrap, Img, Menu2 } from "@/styles/common/header.styles";
+import { HeaderDiv, HeaderWrap, Img, Menu } from "@/styles/common/header.styles";
+import { useMovetoPage } from "./hooks/useMoveToPage";
+import { forwardRef } from "react";
 
-const Header = () => {
-    const router = useRouter();
+const Header = forwardRef((props, headerRef) => {
+    let { onClickMoveToPage } = useMovetoPage();
 
-    const homeBtn = () => {
-        router.push("/");
-    };
-
-    const map1Btn = () => {
-        router.push("/map1");
-    };
-
-    const map2Btn = () => {
-        router.push("/map2");
-    };
-
-    const aboutBtn = () => {
-        router.push("/AboutUs");
-    };
+    const nav = [
+        { txt: "동네찾기", url: "/map1" },
+        { txt: "인프라찾기", url: "/map2" },
+        { txt: "About us", url: "/aboutUs" },
+    ];
 
     return (
-        <HeaderWrap>
+        <HeaderWrap ref={headerRef} isMapHeader={props.isMapHeader}>
             <HeaderDiv>
-                <Img onClick={homeBtn} isHeaderLogo></Img>
+                <Img onClick={onClickMoveToPage("/")} isMapHeader={props.isMapHeader}></Img>
 
-                <Menu2>
-                    <p onClick={map1Btn}>동네찾기</p>
-                </Menu2>
-                <Menu2>
-                    <p onClick={map2Btn}>인프라 찾기</p>
-                </Menu2>
-                <Menu2>
-                    <p onClick={aboutBtn}>About us</p>
-                </Menu2>
+                {nav.map((el, idx) => (
+                    <Menu key={idx} isMapHeader={props.isMapHeader}>
+                        <p onClick={onClickMoveToPage(el.url)}>{el.txt}</p>
+                    </Menu>
+                ))}
             </HeaderDiv>
         </HeaderWrap>
     );
-};
+});
 
 export default Header;

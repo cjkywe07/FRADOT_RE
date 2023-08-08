@@ -1,28 +1,26 @@
-import MapHeader from "@/components/common/mapHeader";
 import { Spin } from "antd";
 import { CgMenuRound } from "react-icons/cg";
 import { IoMdCloseCircle } from "react-icons/io";
-import { CustomOverlayMap, Map, Polygon } from "react-kakao-maps-sdk";
+import { CustomOverlayMap, Map, MapMarker, Polygon } from "react-kakao-maps-sdk";
 import CategoryBox from "./categoryBox";
+import Header from "../common/header";
 import {
     Bar,
-    CateTitle,
-    Category,
     CloseBtn,
     Container,
     DivArea,
-    HeaderWrap,
-    Infra,
+    HeaderPartWrap,
     MapWrap,
     MenuBtn,
     Search,
     SideBar,
     SideWrap,
     WaitBox,
-} from "@/styles/map1.styles";
+} from "@/styles/map.styles";
 
 const MapViewUI = (props) => {
     const {
+        isDongFind,
         barRef,
         headerRef,
         menuBtnRef,
@@ -30,73 +28,66 @@ const MapViewUI = (props) => {
         waitBoxRef,
         infraBtnRef,
         clickCnt,
-        dongInfo,
+        dataInfo,
+        polygonInfo,
         selectedDong,
+        selectedType,
         mousePosition,
+        categoryList,
+        markerSrc,
         setMap,
         setMousePosition,
         infraBtnClick,
         searchBtnClick,
-        headerMouseOver,
-        headerMouseout,
-        sideBarOpen,
-        sideBarClose,
-        handleMouseOver,
-        handleMouseOut,
+        headerShowCtrl,
+        sideBarShowCtrl,
+        infraBtnColorCtrl,
         check,
     } = props;
-
-    // 카테고리 리스트
-    const categoryList = [
-        { title: "문화시설", infraList: ["도서관", "공원", "전통시장", "키즈카페"], plusNum: 0 },
-        { title: "의료시설", infraList: ["응급실"], plusNum: 4 },
-        { title: "체육시설", infraList: ["수영장"], plusNum: 5 },
-        { title: "복지시설", infraList: ["재활센터", "노인복지관"], plusNum: 6 },
-        { title: "교육시설", infraList: ["대학교"], plusNum: 8 },
-    ];
 
     return (
         <Container>
             <MapWrap>
-                <HeaderWrap onMouseOver={headerMouseOver} onMouseOut={headerMouseout}>
+                <HeaderPartWrap onMouseOver={() => headerShowCtrl(1)} onMouseOut={() => headerShowCtrl(0)}>
                     <Bar ref={barRef}></Bar>
-                    <MapHeader ref={headerRef}></MapHeader>
-                </HeaderWrap>
+                    <Header ref={headerRef} isMapHeader></Header>
+                </HeaderPartWrap>
 
                 <SideWrap>
-                    <MenuBtn ref={menuBtnRef} onClick={sideBarOpen}>
+                    <MenuBtn ref={menuBtnRef} onClick={() => sideBarShowCtrl(1)}>
                         <CgMenuRound size="30" color="#004c80" />
                     </MenuBtn>
 
                     <SideBar ref={sideBarRef}>
-                        <CloseBtn onClick={sideBarClose}>
-                            <IoMdCloseCircle size="20" />
-                        </CloseBtn>
+                        <div>
+                            <CloseBtn onClick={() => sideBarShowCtrl(0)}>
+                                <IoMdCloseCircle size="20" />
+                            </CloseBtn>
 
-                        {categoryList.map((category, idx) => (
-                            <CategoryBox
-                                key={idx}
-                                title={category.title}
-                                infraList={category.infraList}
-                                plusNum={category.plusNum}
-                                clickCnt={clickCnt}
-                                infraBtnRef={infraBtnRef}
-                                infraBtnClick={infraBtnClick}
-                                handleMouseOver={handleMouseOver}
-                                handleMouseOut={handleMouseOut}
-                            />
-                        ))}
+                            {categoryList.map((category, idx) => (
+                                <CategoryBox
+                                    key={idx}
+                                    title={category.title}
+                                    infraList={category.infraList}
+                                    plusNum={category.plusNum}
+                                    clickCnt={clickCnt}
+                                    infraBtnRef={infraBtnRef}
+                                    infraBtnClick={infraBtnClick}
+                                    infraBtnColorCtrl={infraBtnColorCtrl}
+                                />
+                            ))}
+                        </div>
 
-                        <Search onClick={searchBtnClick}>검색</Search>
-                        <Search onClick={check}>확인</Search>
+                        {isDongFind && <Search onClick={searchBtnClick}>검색</Search>}
+                        {/* <Search onClick={check}>확인</Search> */}
                     </SideBar>
                 </SideWrap>
 
                 <Map
                     id={`map`}
                     center={{
-                        lat: 37.566826,
-                        lng: 126.9786567,
+                        lat: 37.573423,
+                        lng: 126.923589,
                     }}
                     style={{
                         width: "100%",
@@ -106,48 +97,78 @@ const MapViewUI = (props) => {
                     level={9}
                     maxLevel={9}
                     onCreate={setMap}
-                    onMouseMove={(_map, mouseEvent) =>
-                        setMousePosition({
-                            lat: mouseEvent.latLng.getLat(),
-                            lng: mouseEvent.latLng.getLng(),
-                        })
+                    onMouseMove={
+                        isDongFind
+                            ? (_map, mouseEvent) =>
+                                  setMousePosition({
+                                      lat: mouseEvent.latLng.getLat(),
+                                      lng: mouseEvent.latLng.getLng(),
+                                  })
+                            : () => {}
                     }
                 >
-                    {dongInfo.map((info, idx) => (
-                        <Polygon
-                            key={idx}
-                            path={info.positions} // 그려질 다각형의 좌표 배열
-                            strokeWeight={2} // 선의 두께
-                            strokeColor={"#004c80"} // 선의 색깔
-                            strokeOpacity={0.8} // 선의 불투명도, 1에서 0 사이의 값이며 0에 가까울수록 투명
-                            strokeStyle={"solid"} // 선의 스타일
-                            fillColor={info.isMouseOver ? "#09f" : "#fff"} // 채우기 색깔
-                            fillOpacity={0.7} // 채우기 불투명도
-                            onMouseover={() => (info.isMouseOver = true)}
-                            onMouseout={() => (info.isMouseOver = false)}
-                        />
-                    ))}
+                    {isDongFind ? (
+                        <>
+                            {polygonInfo.map((info, idx) => (
+                                <Polygon
+                                    key={idx}
+                                    path={info.positions} // 그려질 다각형의 좌표 배열
+                                    strokeWeight={2} // 선의 두께
+                                    strokeColor={"#004c80"} // 선의 색깔
+                                    strokeOpacity={0.8} // 선의 불투명도, 1에서 0 사이의 값이며 0에 가까울수록 투명
+                                    strokeStyle={"solid"} // 선의 스타일
+                                    fillColor={info.isMouseOver ? "#09f" : "#fff"} // 채우기 색깔
+                                    fillOpacity={0.7} // 채우기 불투명도
+                                    onMouseover={() => (info.isMouseOver = true)}
+                                    onMouseout={() => (info.isMouseOver = false)}
+                                />
+                            ))}
 
-                    {dongInfo.findIndex((v) => v.isMouseOver) !== -1 && (
-                        <CustomOverlayMap position={mousePosition}>
-                            <DivArea>{dongInfo.find((v) => v.isMouseOver).dongName}</DivArea>
-                        </CustomOverlayMap>
+                            {polygonInfo.findIndex((v) => v.isMouseOver) !== -1 && (
+                                <CustomOverlayMap position={mousePosition}>
+                                    <DivArea>{polygonInfo.find((v) => v.isMouseOver).dongName}</DivArea>
+                                </CustomOverlayMap>
+                            )}
+
+                            {selectedDong.map((info, idx) => (
+                                <Polygon
+                                    key={idx}
+                                    path={info.positions}
+                                    strokeWeight={2}
+                                    strokeColor={"red"}
+                                    strokeOpacity={0.8}
+                                    strokeStyle={"solid"}
+                                    fillColor={info.isMouseOver ? "pink" : "#ffe6ea"}
+                                    fillOpacity={0.7}
+                                    onMouseover={() => (info.isMouseOver = true)}
+                                    onMouseout={() => (info.isMouseOver = false)}
+                                />
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            <Polygon
+                                path={polygonInfo} // 그려질 다각형의 좌표 배열
+                                strokeWeight={2} // 선의 두께
+                                strokeColor={"#004c80"} // 선의 색깔
+                                strokeOpacity={0.8} // 선의 불투명도, 1에서 0 사이의 값이며 0에 가까울수록 투명
+                                strokeStyle={"solid"} // 선의 스타일
+                                fillColor={"#fff"} // 채우기 색깔
+                                fillOpacity={0.7} // 채우기 불투명도
+                            />
+
+                            {selectedType.map((type) =>
+                                dataInfo[type].map((el, idx) => (
+                                    <MapMarker
+                                        key={idx}
+                                        position={el.position}
+                                        title={el.infraName}
+                                        image={{ src: markerSrc[type], size: { width: 30 } }}
+                                    />
+                                ))
+                            )}
+                        </>
                     )}
-
-                    {selectedDong.map((path, idx) => (
-                        <Polygon
-                            key={idx}
-                            path={path.positions}
-                            strokeWeight={2}
-                            strokeColor={"red"}
-                            strokeOpacity={0.8}
-                            strokeStyle={"solid"}
-                            fillColor={path.isMouseOver ? "pink" : "#ffe6ea"}
-                            fillOpacity={0.7}
-                            onMouseover={() => (path.isMouseOver = true)}
-                            onMouseout={() => (path.isMouseOver = false)}
-                        />
-                    ))}
                 </Map>
             </MapWrap>
 

@@ -1,7 +1,7 @@
 import MapView from "@/components/map/mapView.container";
 
-const MapViewPage = () => {
-    return <MapView />;
+const DongFindPage = () => {
+    return <MapView isDongFind />;
 };
 
-export default MapViewPage;
+export default DongFindPage;

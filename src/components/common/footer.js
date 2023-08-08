@@ -1,12 +1,9 @@
-import { FooterWrap, In, Info, Line, Logo2 } from "@/styles/common/footer.styles";
-import { Img } from "@/styles/common/header.styles";
+import { FooterWrap, Img, In, Info, Line } from "@/styles/common/footer.styles";
 
 const Footer = () => {
     return (
         <FooterWrap>
-            <Logo2>
-                <Img></Img>
-            </Logo2>
+            <Img></Img>
             <Line></Line>
             <Info>
                 <In>(주)프라닷</In>
