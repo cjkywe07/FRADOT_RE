@@ -1,9 +1,10 @@
 import MapViewUI from "./mapView.presenter";
-import geojson from "../../../public/coords.json";
+import dongGeojson from "../../../public/coords.json";
+import seoulGeojson from "../../../public/seoul.json";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 
-const MapView = () => {
+const MapView = ({ isDongFind }) => {
     let barRef = useRef(null);
     let headerRef = useRef(null);
     let menuBtnRef = useRef(null);
@@ -17,7 +18,7 @@ const MapView = () => {
     // useRef 여러 개 배열로 관리할 때 시설 종류 순서
     const typeName = ["lib", "park", "mar", "kid", "hos", "swim", "reh", "old", "col"];
 
-    // 공공데이터에서 받아오는 정리안된 초기 데이터 배열
+    // 공공데이터에서 받아오는 정리안된 초기 데이터 변수
     const [data, setData] = useState({
         hos: [],
         lib: [],
@@ -30,7 +31,7 @@ const MapView = () => {
         kid: [],
     });
 
-    // 공공데이터에서 받아온 초기 데이터를 정리해서 시설이름, 구이름, 동이름, 좌표 넣어줄 배열
+    // 공공데이터에서 받아온 초기 데이터를 정리해서 시설이름, 구이름, 동이름, 좌표 넣어줄 변수
     const [dataInfo, setDataInfo] = useState({
         hos: [],
         lib: [],
@@ -43,27 +44,28 @@ const MapView = () => {
         kid: [],
     });
 
-    // map 컴포넌트 넣을 변수
+    // map 컴포넌트 넣어줄 변수
     const [map, setMap] = useState(null);
 
-    // 서울시 동 지도를 그리기 위해
-    // 각 동의 폴리곤좌표, 동이름, 마우스오버여부를 객체 형태로 넣어줄 배열
-    const [dongInfo, setDongInfo] = useState([]);
+    // (1) 동찾기 페이지라면, 서울시 동 폴리곤 그리기 위해
+    // 각 동의 폴리곤좌표, 동이름, 마우스오버여부 넣어줄 변수
+    // (2) 인프라찾기 페이지라면, 서울시 폴리곤 그리기 위해 서울시 폴리곤 좌표 넣어줄 변수
+    const [polygonInfo, setPolygonInfo] = useState([]);
 
-    // 빨갛게 표시할 동의 폴리곤 정보 넣어줄 배열
+    // 빨갛게 표시할 동의 폴리곤 정보 넣어줄 변수
     const [selectedDong, setSelectedDong] = useState([]);
 
-    // 클릭된 시설 종류 넣어줄 배열
+    // 클릭된 시설 종류 넣어줄 변수
     const [selectedType, setSelectedType] = useState([]);
 
     // 로딩 창 띄우고 없애기 위한 변수
     const [display, setDisplay] = useState("");
 
-    // 동 위에 커서 올렸을 때 동이름 나오도록
+    // 동 위에 마우스 커서 올렸을 때 동이름 나오도록
     // 커서를 움직일 때마다의 커서 위치 넣어줄 변수
     const [mousePosition, setMousePosition] = useState({ lat: 0, lng: 0 });
 
-    // dongInfo에 객체 넣어줄 때 사용할 각 시설의 주소 및 시설명의 key 값
+    // 각 시설의 주소 및 시설명의 key 값
     const keyName = {
         hos: { addrKey: "DUTYADDR", nameKey: "DUTYNAME" },
         lib: { addrKey: "ADRES", nameKey: "LBRRY_NAME" },
@@ -74,6 +76,28 @@ const MapView = () => {
         reh: { addrKey: "FCLT_ADDR", nameKey: "FCLT_NM" },
         old: { addrKey: "FCLT_ADDR", nameKey: "FCLT_NM" },
         kid: { addrKey: "BASS_ADRES", nameKey: "FCLTY_NM" },
+    };
+
+    // 카테고리 리스트
+    const categoryList = [
+        { title: "문화시설", infraList: ["도서관", "공원", "전통시장", "키즈카페"], plusNum: 0 },
+        { title: "의료시설", infraList: ["응급실"], plusNum: 4 },
+        { title: "체육시설", infraList: ["수영장"], plusNum: 5 },
+        { title: "복지시설", infraList: ["재활센터", "노인복지관"], plusNum: 6 },
+        { title: "교육시설", infraList: ["대학교"], plusNum: 8 },
+    ];
+
+    // 마커 생성 시 각 이미지 경로
+    const markerSrc = {
+        hos: "/hospital_marker.png",
+        lib: "/library_marker.png",
+        park: "/park_marker.png",
+        swim: "/swim_marker.png",
+        col: "/college_marker.png",
+        mar: "/market_marker.png",
+        reh: "/reh_marker.png",
+        old: "/old_marker.png",
+        kid: "/kids_marker.png",
     };
 
     // 데이터 요청
@@ -110,34 +134,43 @@ const MapView = () => {
             });
     }, []);
 
-    // json 파일 데이터들의
-    // 폴리곤 좌표(positions), 동 이름(dongName), 마우스오버 여부(isMouseOver)를
-    // 객체 형태로 dongInfo 배열에 저장
-    // (서울시 동 지도 그리기 위해)
+    // (1) 동찾기 페이지라면, 서울시 동 폴리곤 그리기 위해 json 파일 데이터들의
+    // 폴리곤 좌표(positions), 동 이름(dongName), 마우스오버 여부(isMouseOver)를 객체 형태로 polygonInfo 배열에 저장
+    // (2) 인프라찾기 페이지라면, 서울시 폴리곤 그리기 위해 json 파일의 좌표들을 객체 형태로 polygonInfo 배열에 저장
     useEffect(() => {
-        if (!map) return;
+        if (isDongFind) {
+            const data = dongGeojson.features; // 각 동의 폴리곤 좌표 및 이름 정보 등이 객체 형태로 담긴 배열
+            let dongContents = []; // 각각의 동 정보(좌표, 동이름, 마우스오버)를 객체 형태로 넣어줄 배열
 
-        const data = geojson.features; // 각 동의 폴리곤 좌표 및 이름 정보 등이 객체 형태로 담긴 배열
-        let dongContents = []; // 각각의 동 정보(좌표, 동이름, 마우스오버)를 객체 형태로 넣어줄 배열
+            data.forEach((dong) => {
+                let content = {}; // dongContents에 넣어줄 각 동 정보 객체
+                content.dongName = dong.properties.EMD_NM; // 동 이름
+                content.positions = []; // 폴리곤 좌표
+                content.isMouseOver = false; // 마우스 오버 이벤트 여부
 
-        data.forEach((dong) => {
-            let content = {}; // dongContents에 넣어줄 각 동 정보 객체
-            content.dongName = dong.properties.EMD_NM; // 동 이름
-            content.positions = []; // 폴리곤 좌표
-            content.isMouseOver = false; // 마우스 오버 이벤트 여부
+                const coordinates = dong.geometry.coordinates[0]; // 폴리곤 좌표들 담긴 배열
 
-            const coordinates = dong.geometry.coordinates[0]; // 폴리곤 좌표들 담긴 배열
+                coordinates.forEach((coord) => {
+                    // 동의 각 폴리곤 좌표를 content.positions에 객체 형태로 넣어줌
+                    content.positions.push({ lat: coord[1], lng: coord[0] });
+                });
 
-            coordinates.forEach((coord) => {
-                // 동의 각 폴리곤 좌표를 content.positions에 객체 형태로 넣어줌
-                content.positions.push({ lat: coord[1], lng: coord[0] });
+                dongContents.push(content);
             });
 
-            dongContents.push(content);
-        });
+            setPolygonInfo(dongContents);
+        } else {
+            const data = seoulGeojson.features[0].geometry.coordinates[0];
 
-        setDongInfo(dongContents);
-    }, [map]);
+            let contents = [];
+
+            data.forEach((coord) => {
+                contents.push({ lat: coord[1], lng: coord[0] });
+            });
+
+            setPolygonInfo(contents);
+        }
+    }, []);
 
     // 로딩 창 띄우기
     useEffect(() => {
@@ -180,7 +213,7 @@ const MapView = () => {
         }
     };
 
-    // 주소로 좌표 검색 요청 시 한 번에 많이 요청하면 에러 발생하므로
+    // 주소로 좌표 검색 요청 시 한 번에 많이 요청하면 429 에러 발생하므로
     // 1초 정도 간격 두고 100개씩 나눠서 요청하여 정보를 해당Info 배열에 담아주기
     const arrFunc = (data, addrKey, nameKey, type) => {
         let info = [];
@@ -189,19 +222,23 @@ const MapView = () => {
 
         for (let i = 0; i < iLen; i++) {
             for (let j = i * 100; j < (i + 1) * 100; j++) {
-                setTimeout(() => axiosFunc(data[j], addrKey, nameKey, info), (i + 1) * 1000);
+                setTimeout(() => axiosFunc(data[j], addrKey, nameKey, info), i * 1000);
             }
         }
         for (let i = iLen * 100; i < dataLen; i++) {
-            setTimeout(() => axiosFunc(data[i], addrKey, nameKey, info), (iLen + 1) * 1000);
+            setTimeout(() => axiosFunc(data[i], addrKey, nameKey, info), iLen * 1000);
         }
 
-        setDataInfo({
-            ...dataInfo,
-            [type]: info,
-        });
+        setTimeout(
+            () =>
+                setDataInfo({
+                    ...dataInfo,
+                    [type]: info,
+                }),
+            (iLen + 1) * 1000
+        );
 
-        setTimeout(() => setDisplay("none"), 3000);
+        setTimeout(() => setDisplay("none"), (iLen + 1) * 1000);
     };
 
     // 인프라시설 버튼 클릭
@@ -221,36 +258,34 @@ const MapView = () => {
                 );
             }
 
-            // selectedType 배열에 선택한 타입 번호 넣기
-            setSelectedType((prevSelectedType) => {
-                if (!prevSelectedType.length) {
-                    return [typeIdx];
-                } else {
-                    return [...prevSelectedType, typeIdx];
-                }
-            });
-
             // 버튼 배경색, 글자색 변경
             infraBtnRef.current[typeIdx].style.backgroundColor = "#756bff";
             infraBtnRef.current[typeIdx].style.color = "white";
-            infraBtnRef.current[typeIdx].style.boxShadow =
-                "1px 2px 0px 1px rgba(165, 165, 165, 0.09), 2px 3px 0px 0px rgb(26 26 26 / 19%) inset";
+            infraBtnRef.current[typeIdx].style.boxShadow = "2px 3px 1px 0px rgb(26 26 26 / 19%) inset";
 
             // cnt -> 1
             clickCnt.current[typeIdx]++;
+
+            // selectedType 배열에 선택한 type 넣기
+            setSelectedType((prevSelectedType) => {
+                if (!prevSelectedType.length) {
+                    return [typeName[typeIdx]];
+                } else {
+                    return [...prevSelectedType, typeName[typeIdx]];
+                }
+            });
         } else {
             // 버튼 배경색, 글자색 변경
             infraBtnRef.current[typeIdx].style.backgroundColor = "white";
             infraBtnRef.current[typeIdx].style.color = "#333";
-            infraBtnRef.current[typeIdx].style.boxShadow =
-                "1px 2px 0px 1px rgb(165 165 165 / 9%), 2px 2px 0px 0 rgb(137 137 137 / 19%)";
+            infraBtnRef.current[typeIdx].style.boxShadow = "2px 2px 1px 0px rgb(137 137 137 / 19%)";
 
             // cnt -> 0
             clickCnt.current[typeIdx]--;
 
-            // selectedType 배열에서 type정보 빼주기
+            // selectedType 배열에서 type 빼주기
             setSelectedType((prevSelectedType) => {
-                return prevSelectedType.filter((t) => t !== typeIdx);
+                return prevSelectedType.filter((t) => t !== typeName[typeIdx]);
             });
         }
     };
@@ -260,11 +295,11 @@ const MapView = () => {
         let filteredDong = [];
 
         if (selectedType) {
-            selectedType.forEach((typeIdx, index) => {
+            selectedType.forEach((type, idx) => {
                 // 첫 번째로 클릭된 인프라의 경우
-                if (index === 0) {
-                    dataInfo[typeName[typeIdx]].forEach((infraInfo) => {
-                        dongInfo.forEach((dInfo) => {
+                if (idx === 0) {
+                    dataInfo[type].forEach((infraInfo) => {
+                        polygonInfo.forEach((dInfo) => {
                             if (infraInfo.dongName.includes(dInfo.dongName)) {
                                 filteredDong.push(dInfo);
                             }
@@ -275,7 +310,7 @@ const MapView = () => {
                 } else {
                     // 두 번째 이후부터 클릭된 인프라의 경우
                     let temp = [];
-                    dataInfo[typeName[typeIdx]].forEach((infraInfo) => {
+                    dataInfo[type].forEach((infraInfo) => {
                         filteredDong.forEach((dInfo) => {
                             if (infraInfo.dongName.includes(dInfo.dongName)) {
                                 temp.push(dInfo);
@@ -293,53 +328,37 @@ const MapView = () => {
     };
 
     // 헤더 마우스 오버 / 마우스 아웃
-    const headerMouseOver = () => {
-        barRef.current.style.visibility = "hidden";
-        headerRef.current.style.transform = "translateY(0)";
-    };
-
-    const headerMouseout = () => {
-        barRef.current.style.transitionDelay = "300ms";
-        barRef.current.style.visibility = "visible";
-        headerRef.current.style.transform = "translateY(-60px)";
+    const headerShowCtrl = (isMouseOver) => {
+        headerRef.current.style.transform = isMouseOver ? "translateY(0)" : "translateY(-60px)";
+        barRef.current.style.visibility = isMouseOver ? "hidden" : "visible";
+        barRef.current.style.transitionDelay = isMouseOver ? "0ms" : "300ms";
     };
 
     // 사이드바 열기 / 닫기
-    const sideBarOpen = () => {
-        menuBtnRef.current.style.transitionDelay = "0ms";
-        menuBtnRef.current.style.visibility = "hidden";
-        sideBarRef.current.style.transform = "translateX(0)";
-    };
-
-    const sideBarClose = () => {
-        menuBtnRef.current.style.transitionDelay = "1000ms";
-        menuBtnRef.current.style.visibility = "visible";
-        sideBarRef.current.style.transform = "translateX(-350px)";
+    const sideBarShowCtrl = (isMenuBtnCliked) => {
+        sideBarRef.current.style.transform = isMenuBtnCliked ? "translateX(0)" : "translateX(-350px)";
+        menuBtnRef.current.style.visibility = isMenuBtnCliked ? "hidden" : "visible";
+        menuBtnRef.current.style.transitionDelay = isMenuBtnCliked ? "0ms" : "1000ms";
     };
 
     // 버튼 색 마우스 오버 / 마우스 아웃
-    const handleMouseOver = (e, cnt) => {
+    const infraBtnColorCtrl = (e, cnt, isMouseOver) => {
         // 버튼이 클릭되어 있지 않다면
         if (!cnt) {
-            e.target.style.backgroundColor = "#756bff";
-            e.target.style.color = "white";
-        }
-    };
-
-    const handleMouseOut = (e, cnt) => {
-        if (!cnt) {
-            e.target.style.backgroundColor = "white";
-            e.target.style.color = "#333";
+            e.target.style.backgroundColor = isMouseOver ? "#756bff" : "white";
+            e.target.style.color = isMouseOver ? "white" : "#333";
         }
     };
 
     const check = () => {
+        console.log(polygonInfo);
         console.log(selectedType);
         console.log(dataInfo);
     };
 
     return (
         <MapViewUI
+            isDongFind={isDongFind}
             barRef={barRef}
             headerRef={headerRef}
             menuBtnRef={menuBtnRef}
@@ -347,19 +366,20 @@ const MapView = () => {
             waitBoxRef={waitBoxRef}
             infraBtnRef={infraBtnRef}
             clickCnt={clickCnt}
-            dongInfo={dongInfo}
+            dataInfo={dataInfo}
+            polygonInfo={polygonInfo}
             selectedDong={selectedDong}
+            selectedType={selectedType}
             mousePosition={mousePosition}
+            categoryList={categoryList}
+            markerSrc={markerSrc}
             setMap={setMap}
             setMousePosition={setMousePosition}
             infraBtnClick={infraBtnClick}
             searchBtnClick={searchBtnClick}
-            headerMouseOver={headerMouseOver}
-            headerMouseout={headerMouseout}
-            sideBarOpen={sideBarOpen}
-            sideBarClose={sideBarClose}
-            handleMouseOver={handleMouseOver}
-            handleMouseOut={handleMouseOut}
+            headerShowCtrl={headerShowCtrl}
+            sideBarShowCtrl={sideBarShowCtrl}
+            infraBtnColorCtrl={infraBtnColorCtrl}
             check={check}
         />
     );

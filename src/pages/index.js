@@ -1,3 +1,5 @@
+import { useMovetoPage } from "@/components/common/hooks/useMoveToPage";
+import { useEffect, useRef, useState } from "react";
 import LayOut from "@/components/common/layout";
 import {
     ContentWrap,
@@ -18,12 +20,9 @@ import {
     Wave,
     ImgWrap,
 } from "@/styles/main.styles";
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
 
 const MainPage = () => {
-    const router = useRouter();
+    let { onClickMoveToPage } = useMovetoPage();
 
     const tabPart = useRef([]); // 탭 클릭 시 이동하려는 컴포넌트 의 배열
     const tab = ["동네찾기 알아보기", "인프라찾기 알아보기"]; // 탭 이름 배열
@@ -58,14 +57,6 @@ const MainPage = () => {
 
         return () => tabObserver.disconnect();
     }, []);
-
-    const mapBtn1 = () => {
-        router.push("/map1");
-    };
-
-    const mapBtn2 = () => {
-        router.push("/map2");
-    };
 
     return (
         <LayOut>
@@ -138,7 +129,7 @@ const MainPage = () => {
                             </ExplainItem>
                         </ExplainItemWrap>
 
-                        <ShortCutBtn part="town" onClick={mapBtn1}>
+                        <ShortCutBtn part="town" onClick={onClickMoveToPage("/map1")}>
                             바로가기
                         </ShortCutBtn>
                     </ContentWrap>
@@ -181,7 +172,7 @@ const MainPage = () => {
                             </ExplainItem>
                         </ExplainItemWrap>
 
-                        <ShortCutBtn part="infra" onClick={mapBtn2}>
+                        <ShortCutBtn part="infra" onClick={onClickMoveToPage("/map2")}>
                             바로가기
                         </ShortCutBtn>
                     </ContentWrap>
