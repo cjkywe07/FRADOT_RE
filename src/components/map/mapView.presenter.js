@@ -42,7 +42,6 @@ const MapViewUI = (props) => {
         headerShowCtrl,
         sideBarShowCtrl,
         infraBtnColorCtrl,
-        check,
     } = props;
 
     return (
@@ -79,7 +78,6 @@ const MapViewUI = (props) => {
                         </div>
 
                         {isDongFind && <Search onClick={searchBtnClick}>검색</Search>}
-                        {/* <Search onClick={check}>확인</Search> */}
                     </SideBar>
                 </SideWrap>
 

@@ -89,15 +89,15 @@ const MapView = ({ isDongFind }) => {
 
     // 마커 생성 시 각 이미지 경로
     const markerSrc = {
-        hos: "/hospital_marker.png",
-        lib: "/library_marker.png",
+        hos: "/hos_marker.png",
+        lib: "/lib_marker.png",
         park: "/park_marker.png",
         swim: "/swim_marker.png",
-        col: "/college_marker.png",
-        mar: "/market_marker.png",
+        col: "/col_marker.png",
+        mar: "/mar_marker.png",
         reh: "/reh_marker.png",
         old: "/old_marker.png",
-        kid: "/kids_marker.png",
+        kid: "/kid_marker.png",
     };
 
     // 데이터 요청
@@ -106,13 +106,13 @@ const MapView = ({ isDongFind }) => {
             .all([
                 axios.get(`http://openapi.seoul.go.kr:8088/576e61714e636a6b3637545a455046/json/TvEmgcHospitalInfo/1/500/`),
                 axios.get(`http://openapi.seoul.go.kr:8088/4f49455041636a6b37376d485a5255/json/SeoulPublicLibraryInfo/1/500/`),
-                axios.get(`http://openAPI.seoul.go.kr:8088/6258655663626f623130365855576c6d/json/SearchParkInfoService/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/4b56466d77626f6234384444716670/json/LOCALDATA_103501/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/4643455575626f623933496f444f53/json/SebcCollegeInfoKor/1/500/`),
-                axios.get(`http://openAPI.seoul.go.kr:8088/4f46506f71626f6231366262796977/json/ListTraditionalMarket/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/494b465849626f6236316e786c4f57/json/fcltOpenInfo_OMSI/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/5945797941626f623930564f595467/json/fcltOpenInfo_OWI/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/6851706553626f623130307049427043/json/tnFcltySttusInfo1011/1/500/`),
+                axios.get(`http://openAPI.seoul.go.kr:8088/517a63584d636a6b313035634b614f49/json/SearchParkInfoService/1/500/`),
+                axios.get(`http://openapi.seoul.go.kr:8088/4b71786173636a6b37374d67555364/json/LOCALDATA_103501/1/500/`),
+                axios.get(`http://openapi.seoul.go.kr:8088/6c79444366636a6b3131327867626b42/json/SebcCollegeInfoKor/1/500/`),
+                axios.get(`http://openAPI.seoul.go.kr:8088/6f5a474451636a6b3132336871466674/json/ListTraditionalMarket/1/500/`),
+                axios.get(`http://openapi.seoul.go.kr:8088/4561544d6d636a6b3130366f50625644/json/fcltOpenInfo_OMSI/1/500/`),
+                axios.get(`http://openapi.seoul.go.kr:8088/615a696145636a6b3131394f6e4c5341/json/fcltOpenInfo_OWI/1/500/`),
+                axios.get(`http://openapi.seoul.go.kr:8088/495057734c636a6b313137556c4b777a/json/tnFcltySttusInfo1011/1/500/`),
             ])
             .then(
                 axios.spread((hos, lib, park, swim, col, mar, reh, old, kid) => {
@@ -261,7 +261,7 @@ const MapView = ({ isDongFind }) => {
             // 버튼 배경색, 글자색 변경
             infraBtnRef.current[typeIdx].style.backgroundColor = "#756bff";
             infraBtnRef.current[typeIdx].style.color = "white";
-            infraBtnRef.current[typeIdx].style.boxShadow = "2px 3px 1px 0px rgb(26 26 26 / 19%) inset";
+            infraBtnRef.current[typeIdx].style.boxShadow = "2px 3px 1px rgb(26 26 26 / 19%) inset";
 
             // cnt -> 1
             clickCnt.current[typeIdx]++;
@@ -278,7 +278,7 @@ const MapView = ({ isDongFind }) => {
             // 버튼 배경색, 글자색 변경
             infraBtnRef.current[typeIdx].style.backgroundColor = "white";
             infraBtnRef.current[typeIdx].style.color = "#333";
-            infraBtnRef.current[typeIdx].style.boxShadow = "2px 2px 1px 0px rgb(137 137 137 / 19%)";
+            infraBtnRef.current[typeIdx].style.boxShadow = "2px 2px 1px rgb(137 137 137 / 19%)";
 
             // cnt -> 0
             clickCnt.current[typeIdx]--;
@@ -350,12 +350,6 @@ const MapView = ({ isDongFind }) => {
         }
     };
 
-    const check = () => {
-        console.log(polygonInfo);
-        console.log(selectedType);
-        console.log(dataInfo);
-    };
-
     return (
         <MapViewUI
             isDongFind={isDongFind}
@@ -380,7 +374,6 @@ const MapView = ({ isDongFind }) => {
             headerShowCtrl={headerShowCtrl}
             sideBarShowCtrl={sideBarShowCtrl}
             infraBtnColorCtrl={infraBtnColorCtrl}
-            check={check}
         />
     );
 };

@@ -89,7 +89,7 @@ export const Infra = styled.button`
     border: 1px solid #d2d2d2;
     border-radius: 50px;
     background-color: white;
-    box-shadow: 2px 2px 1px 0px rgb(137 137 137 / 19%);
+    box-shadow: 2px 2px 1px rgb(137 137 137 / 19%);
     cursor: pointer;
 `;
 

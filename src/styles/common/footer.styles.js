@@ -12,7 +12,7 @@ export const FooterWrap = styled.div`
 
 export const Img = styled.div`
     background: url("/logo.png") no-repeat center / contain;
-    width: 17%;
+    width: 200px;
     height: 100px;
 `;
 
@@ -35,3 +35,29 @@ export const Info = styled.div`
 `;
 
 export const In = styled.div``;
+
+export const TopBtn = styled.div`
+    width: 60px;
+    height: 60px;
+    background-color: #756bff;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 15%;
+    opacity: 0;
+    z-index: 100;
+
+    &:hover {
+        background-color: #6257ff;
+    }
+
+    & > p:first-of-type {
+        font-size: 10px;
+        line-height: 10px;
+    }
+`;

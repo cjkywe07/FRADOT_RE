@@ -3,8 +3,7 @@ import styled from "@emotion/styled";
 export const Main = styled.div`
     position: relative;
     margin: 0 auto;
-    width: 100%;
-    min-width: 1200px;
+    width: 1200px;
     padding: 0 30px;
 `;
 
@@ -76,7 +75,7 @@ export const LogoImg = styled.div`
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-    width: 70%;
+    width: 400px;
     height: 100px;
     margin: 80px auto;
 `;
