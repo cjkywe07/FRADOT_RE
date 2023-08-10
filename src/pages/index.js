@@ -24,48 +24,49 @@ import {
 const MainPage = () => {
     let { onClickMoveToPage } = useMovetoPage();
 
-    const tabPart = useRef([]); // 탭 클릭 시 이동하려는 컴포넌트 의 배열
-    const tab = ["동네찾기 알아보기", "인프라찾기 알아보기"]; // 탭 이름 배열
-    const [currentTabPart, setCurrentTabPart] = useState(false); // 선택된 탭 아래에 스타일 적용하기 위해 current props의 조건으로 사용할 state 변수
+    let tabRef = useRef([]);
+    let tabPartRef = useRef([]);
+    let activeState = useRef([true, true]);
+    const tabTitle = ["동네찾기 알아보기", "인프라찾기 알아보기"];
 
     useEffect(() => {
-        // 콜백함수
-        // 매개변수로 entries 를 받음
-        // entries는 entry 를 담는 배열
-        // entry는 해당 Observer가 관찰하고 있는 요소들
-        const changeTab = (entries) => {
-            entries.forEach((entry) => {
-                // isIntersecting : 타겟이 현재 root에서 관찰되는지 (bloolean)
-                if (entry.isIntersecting) {
-                    // 타겟이 관찰될 때 실행할 코드
-                    setCurrentTabPart(entry.target); // target : 관찰 중인 타겟 엘리먼트
-                }
-            });
-        };
+        window.addEventListener("scroll", function () {
+            if (!(tabRef.current[0] && tabRef.current[1])) {
+                return;
+            }
 
-        // 옵션
-        const observeOption = { rootMargin: "-10% 0px", threshold: 0.1 };
-
-        // IntersectionObserver 생성
-        // 특정 요소(ex.tabPart)가 화면에 나타나면/사라지면 동작 수행
-        const tabObserver = new IntersectionObserver(
-            changeTab, // 콜백함수
-            observeOption // [옵션]
-        );
-
-        tabPart.current.forEach((tab) => tabObserver.observe(tab));
-
-        return () => tabObserver.disconnect();
+            if (window.scrollY >= 1523) {
+                activeState.current[1] = true;
+                tabRef.current[1].style.borderBottom = "3px solid #756bff";
+                tabRef.current[1].style.opacity = "100%";
+                activeState.current[0] = false;
+                tabRef.current[0].style.borderBottom = "";
+                tabRef.current[0].style.opacity = "20%";
+            } else if (window.scrollY >= 498) {
+                activeState.current[0] = true;
+                tabRef.current[0].style.borderBottom = "3px solid #756bff";
+                tabRef.current[0].style.opacity = "100%";
+                activeState.current[1] = false;
+                tabRef.current[1].style.borderBottom = "";
+                tabRef.current[1].style.opacity = "20%";
+            }
+        });
     }, []);
+
+    const tabColorCtrl = (e, activeState, isMouseOver) => {
+        if (!activeState) {
+            e.target.style.opacity = isMouseOver ? "100%" : "20%";
+        }
+    };
 
     return (
         <LayOut>
             <TopContainer>
                 <Ocean>
-                    <Wave></Wave>
-                    <Wave></Wave>
+                    <Wave />
+                    <Wave />
                 </Ocean>
-                <Cover></Cover>
+                <Cover />
                 <Text>
                     <h1>내 주변의 모든 것, 프라닷</h1>
                     <p>내가 원하는 인프라를 갖춘 동네를, 우리 동네에 있는 인프라를 한 눈에 살펴보세요</p>
@@ -74,24 +75,20 @@ const MainPage = () => {
 
             <ExplainContainer>
                 <ExpalinTab>
-                    {/* 2개의 탭 생성 */}
-                    {tab.map((data, idx) => (
-                        <li key={idx}>
-                            <Tab
-                                onClick={() => {
-                                    // ex) 첫(두) 번째 탭 클릭 시
-                                    tabPart.current[idx].scrollIntoView({ behavior: "smooth" }); // 첫(두) 번째 컴포넌트로 스크롤
-                                    setCurrentTabPart(tabPart.current[idx]); // currentTabPart를, 스크롤된 컴포넌트로 설정
-                                }}
-                                current={tabPart.current[idx] === currentTabPart} // 첫(두) 번째 탭이 currentTabPart(스크롤된 컴포넌트) 라면 true
-                            >
-                                {data}
-                            </Tab>
-                        </li>
+                    {tabTitle.map((title, idx) => (
+                        <Tab
+                            key={idx}
+                            ref={(el) => (tabRef.current[idx] = el)}
+                            onMouseOver={(e) => tabColorCtrl(e, activeState.current[idx], 1)}
+                            onMouseOut={(e) => tabColorCtrl(e, activeState.current[idx], 0)}
+                            onClick={() => tabPartRef.current[idx].scrollIntoView({ behavior: "smooth" })}
+                        >
+                            {title}
+                        </Tab>
                     ))}
                 </ExpalinTab>
 
-                <ExplainWrap ref={(el) => (tabPart.current[0] = el)} part="town">
+                <ExplainWrap ref={(el) => (tabPartRef.current[0] = el)} isDongFind>
                     <ContentWrap>
                         <ExplainText>
                             <h2>동네찾기란?</h2>
@@ -105,9 +102,7 @@ const MainPage = () => {
                         <ExplainItemWrap>
                             <ExplainItem>
                                 <ImgWrap>
-                                    <Img src="/map1-1.jpg">
-                                        {/* <Image src="/map1-1.jpg" width={675} height={340} alt="map1-1"></Image> */}
-                                    </Img>
+                                    <Img src="/map1_1.jpg" />
                                 </ImgWrap>
 
                                 <StepText>
@@ -118,10 +113,9 @@ const MainPage = () => {
 
                             <ExplainItem>
                                 <ImgWrap>
-                                    <Img src="/map1-2.jpg">
-                                        {/* <Image src="/map1-2.jpg" width={675} height={340} alt="map1-2"></Image> */}
-                                    </Img>
+                                    <Img src="/map1_2.jpg" />
                                 </ImgWrap>
+
                                 <StepText>
                                     <h2>Step 2.</h2>
                                     <p>붉게 표시된 지역에 마우스를 올려 해당 인프라 시설들이 모여있는 동을 확인합니다.</p>
@@ -129,13 +123,13 @@ const MainPage = () => {
                             </ExplainItem>
                         </ExplainItemWrap>
 
-                        <ShortCutBtn part="town" onClick={onClickMoveToPage("/map1")}>
+                        <ShortCutBtn onClick={onClickMoveToPage("/map1")} isDongFind>
                             바로가기
                         </ShortCutBtn>
                     </ContentWrap>
                 </ExplainWrap>
 
-                <ExplainWrap ref={(el) => (tabPart.current[1] = el)} part="infra">
+                <ExplainWrap ref={(el) => (tabPartRef.current[1] = el)}>
                     <ContentWrap>
                         <ExplainText>
                             <h2>인프라찾기란?</h2>
@@ -152,10 +146,9 @@ const MainPage = () => {
                                     <h2>Step 1.</h2>
                                     <p>원하는 인프라 시설을 선택합니다.</p>
                                 </StepText>
+
                                 <ImgWrap>
-                                    <Img src="/map2-1.jpg">
-                                        {/* <Image src="/map2-1.jpg" width={675} height={340} alt="map2-1"></Image> */}
-                                    </Img>
+                                    <Img src="/map2_1.jpg" />
                                 </ImgWrap>
                             </ExplainItem>
 
@@ -164,17 +157,14 @@ const MainPage = () => {
                                     <h2>Step 2.</h2>
                                     <p>해당 시설의 위치가 표시되면 마커에 마우스를 올려 시설명을 확인합니다.</p>
                                 </StepText>
+
                                 <ImgWrap>
-                                    <Img src="/map2-2.jpg">
-                                        {/* <Image src="/map2-2.jpg" width={675} height={340} alt="map2-2"></Image> */}
-                                    </Img>
+                                    <Img src="/map2_2.jpg" />
                                 </ImgWrap>
                             </ExplainItem>
                         </ExplainItemWrap>
 
-                        <ShortCutBtn part="infra" onClick={onClickMoveToPage("/map2")}>
-                            바로가기
-                        </ShortCutBtn>
+                        <ShortCutBtn onClick={onClickMoveToPage("/map2")}>바로가기</ShortCutBtn>
                     </ContentWrap>
                 </ExplainWrap>
             </ExplainContainer>

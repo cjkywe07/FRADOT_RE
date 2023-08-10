@@ -108,7 +108,7 @@ const AboutUsPage = () => {
                                 </Logo>
 
                                 <Logo>
-                                    <LogoImg src="/gridlogo.png" />
+                                    <LogoImg src="/gridLogo.png" />
                                     <p>Grid System</p>
                                 </Logo>
                             </LogoImgBox>

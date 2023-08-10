@@ -16,9 +16,6 @@ const MyStyle = css`
     button {
         color: #333;
     }
-    /* &::-webkit-scrollbar {
-        display: none;
-    } */
 `;
 
 const GlobalStyle = () => {
