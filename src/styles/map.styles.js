@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { device } from "./global.styles";
 
 export const Container = styled.div``;
 
@@ -11,7 +12,7 @@ export const HeaderPartWrap = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 150;
 `;
 
 export const Bar = styled.div`
@@ -57,7 +58,19 @@ export const SideBar = styled.div`
     &::-webkit-scrollbar {
         display: none;
     }
+
+    @media screen and (${device.mobileML}) {
+        font-size: 11px;
+        padding: 6px 18px;
+        margin: 0;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        height: calc(100vh - 300px);
+    }
 `;
+
+export const CategoryBoxWrap = styled.div``;
 
 export const CloseBtn = styled.div`
     position: absolute;
@@ -68,6 +81,15 @@ export const CloseBtn = styled.div`
 
 export const Category = styled.div`
     padding: 10px;
+
+    @media screen and (${device.mobileML}) {
+        padding: 5px 5px 5px 5px;
+        margin: 1px;
+        width: 45vw;
+        &:nth-child(2n) {
+            margin-left: 1px;
+        }
+    }
 `;
 
 export const CateTitle = styled.h2`
@@ -79,6 +101,11 @@ export const InfraBtnWrap = styled.div`
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 0 5px;
+
+    @media screen and (${device.mobileML}) {
+        padding: 3px;
+        width: 95%;
+    }
 `;
 
 export const Infra = styled.button`
@@ -91,17 +118,15 @@ export const Infra = styled.button`
     background-color: white;
     box-shadow: 2px 2px 1px rgb(137 137 137 / 19%);
     cursor: pointer;
-`;
 
-export const DivArea = styled.div`
-    position: absolute;
-    background: #fff;
-    border: 1px solid #888;
-    border-radius: 3px;
-    font-size: 14px;
-    top: -5px;
-    left: 15px;
-    padding: 2px 5px;
+    @media screen and (${device.mobileML}) {
+        font-size: 11px;
+        padding: 7px 3px;
+        width: 70px;
+        &:nth-child(2) {
+            margin-left: 1px;
+        }
+    }
 `;
 
 export const Search = styled.button`
@@ -117,6 +142,45 @@ export const Search = styled.button`
 
     &:hover {
         background-color: #6257ff;
+    }
+
+    @media screen and (${device.mobileML}) {
+        margin: 20px auto;
+    }
+`;
+
+export const DivArea = styled.div`
+    position: absolute;
+    background: #fff;
+    border: 1px solid #888;
+    border-radius: 3px;
+    font-size: 14px;
+    top: -5px;
+    left: 15px;
+    padding: 2px 5px;
+`;
+
+export const NameArea = styled.div`
+    position: relative;
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0px 0px 4px #888;
+
+    &::after {
+        content: "";
+        position: absolute;
+        margin-left: -12px;
+        left: 50%;
+        bottom: -12px;
+        width: 22px;
+        height: 12px;
+        background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
     }
 `;
 
