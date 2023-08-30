@@ -1,11 +1,21 @@
 import styled from "@emotion/styled";
+import { device } from "./global.styles";
 
 export const TopContainer = styled.div`
-    overflow: hidden;
     width: 100%;
     height: 500px;
     position: relative;
-    background-color: #d9d9d9;
+    overflow: hidden;
+    margin-top: 100px;
+
+    @media screen and (${device.tablet}) {
+        height: 450px;
+    }
+
+    @media screen and (${device.mobileML}) {
+        height: 250px;
+        margin-top: 60px;
+    }
 `;
 
 export const Ocean = styled.div`
@@ -14,6 +24,10 @@ export const Ocean = styled.div`
     position: absolute;
     bottom: 0;
     background: #015871;
+
+    @media screen and (${device.mobileML}) {
+        background: none;
+    }
 `;
 
 export const Wave = styled.div`
@@ -34,6 +48,10 @@ export const Wave = styled.div`
         }
     }
 
+    @media screen and (${device.mobileML}) {
+        top: -125px;
+    }
+
     &:nth-of-type(2) {
         top: -175px;
         animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.125s infinite, swell 7s ease -1.25s infinite;
@@ -47,6 +65,10 @@ export const Wave = styled.div`
             50% {
                 transform: translateY(5px);
             }
+        }
+
+        @media screen and (${device.mobileML}) {
+            top: -105px;
         }
     }
 `;
@@ -73,12 +95,44 @@ export const Text = styled.div`
     align-items: center;
     row-gap: 25px;
 
-    & > h1 {
+    h1 {
         font-size: 55px;
     }
-    & > p {
+    div {
+        display: flex;
+        column-gap: 10px;
+    }
+    p {
         font-size: 26px;
-        font-weight: 400;
+    }
+
+    @media screen and (${device.tablet}) {
+        div {
+            display: block;
+        }
+        p {
+            text-align: center;
+        }
+    }
+
+    @media screen and (${device.mobileML}) {
+        row-gap: 15px;
+
+        h1 {
+            font-size: 30px;
+        }
+        p {
+            font-size: 16px;
+        }
+    }
+
+    @media screen and (${device.mobileS}) {
+        h1 {
+            font-size: 27px;
+        }
+        p {
+            font-size: 15px;
+        }
     }
 `;
 
@@ -95,9 +149,13 @@ export const ExpalinTab = styled.div`
     justify-content: center;
     align-items: center;
     column-gap: 100px;
+    top: 99px;
 
-    @media screen and (min-width: 1280px) {
-        top: 100px;
+    @media screen and (${device.mobileML}) {
+        height: 45px;
+        justify-content: space-evenly;
+        column-gap: 0;
+        top: 59px;
     }
 `;
 
@@ -107,54 +165,130 @@ export const Tab = styled.p`
     font-size: 24px;
     font-weight: 500;
     cursor: pointer;
+
+    @media screen and (${device.mobileML}) {
+        line-height: 45px;
+        font-size: 17px;
+    }
+
+    @media screen and (${device.mobileS}) {
+        font-size: 16px;
+    }
 `;
 
 export const ExplainWrap = styled.div`
+    width: 100%;
     background-color: ${(props) => (props.isDongFind ? "#f8f8ff" : "#F0F8FF")};
     padding: 50px 0;
     scroll-margin-top: 160px;
+
+    @media screen and (${device.mobileML}) {
+        padding: 25px 0;
+        scroll-margin-top: 105px;
+    }
 `;
 
 export const ContentWrap = styled.div`
     margin: 0 auto;
-    width: 1260px;
+    max-width: 1260px;
     padding: 0 50px;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 50px;
+    row-gap: 50px;
+
+    @media screen and (${device.laptopS}) {
+        max-width: 1030px;
+    }
+
+    @media screen and (${device.mobileML}) {
+        row-gap: 30px;
+        padding: 0 18px;
+    }
 `;
 
 export const ExplainText = styled.div`
     text-align: center;
 
-    & > h2 {
+    h2 {
         margin-bottom: 20px;
         font-size: 26px;
         text-shadow: 2px 2px 2px rgb(0 0 0 / 20%);
     }
-    & > p {
+    p {
         font-size: 22px;
         font-weight: 500;
+    }
+
+    @media screen and (${device.mobileML}) {
+        h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        p {
+            font-size: 16px;
+        }
+    }
+
+    @media screen and (${device.mobileS}) {
+        h2 {
+            font-size: 17px;
+        }
+        p {
+            font-size: 14px;
+        }
     }
 `;
 
 export const ExplainItemWrap = styled.ul`
     display: flex;
     flex-direction: column;
-    gap: 80px;
+    row-gap: 80px;
+
+    @media screen and (${device.tablet}) {
+        row-gap: 60px;
+    }
+
+    @media screen and (${device.mobileML}) {
+        row-gap: 40px;
+    }
 `;
 
 export const ExplainItem = styled.li`
-    display: flex;
-    align-items: center;
-    gap: 30px;
+    position: relative;
+
+    @media screen and (${device.tablet}) {
+        display: flex;
+        flex-direction: column;
+    }
 `;
 
 export const ImgWrap = styled.div`
-    width: 700px;
-    height: 347px;
+    width: 662px;
+    height: 345px;
     box-shadow: 0 25px 98px rgb(0 0 0 / 10%);
+    float: ${(props) => (props.isFirstPart ? "left" : "right")};
+
+    @media screen and (${device.laptopS}) {
+        width: 582px;
+        height: 304px;
+    }
+
+    @media screen and (${device.tablet}) {
+        width: 662px;
+        height: 345px;
+        margin: 0 auto;
+    }
+
+    @media screen and (${device.mobileML}) {
+        width: 320px;
+        height: 167px;
+    }
+
+    @media screen and (${device.mobileS}) {
+        width: 280px;
+        height: 146px;
+    }
 `;
 
 export const Img = styled.div`
@@ -167,20 +301,56 @@ export const Img = styled.div`
 `;
 
 export const StepText = styled.div`
-    width: 42%;
+    width: 40%;
+    position: absolute;
+    right: ${(props) => props.isFirstPart && "0"};
+    top: 50%;
+    transform: translateY(-50%);
 
-    & > h2 {
+    h2 {
         margin-bottom: 15px;
         font-size: 25px;
         text-shadow: 2px 2px 2px rgb(0 0 0 / 20%);
     }
-    & > p {
+    p {
         font-size: 22px;
         font-weight: 500;
+    }
+
+    @media screen and (${device.laptopS}) {
+        width: 35%;
+    }
+
+    @media screen and (${device.tablet}) {
+        position: static;
+        width: 100%;
+        margin-top: 10px;
+        text-align: center;
+        transform: translateY(0);
+    }
+
+    @media screen and (${device.mobileML}) {
+        h2 {
+            margin-bottom: 5px;
+            font-size: 20px;
+        }
+        p {
+            font-size: 16px;
+        }
+    }
+
+    @media screen and (${device.mobileS}) {
+        h2 {
+            font-size: 17px;
+        }
+        p {
+            font-size: 14px;
+        }
     }
 `;
 
 export const ShortCutBtn = styled.button`
+    clear: both;
     padding: 8px 25px;
     font-size: 16px;
     font-weight: 600;
@@ -198,5 +368,21 @@ export const ShortCutBtn = styled.button`
 
     &:hover {
         transform: translateY(-3px);
+    }
+
+    @media screen and (${device.tablet}) {
+        position: static;
+        margin: -20px auto 0;
+    }
+
+    @media screen and (${device.mobileML}) {
+        font-size: 12px;
+        padding: 6px 18px;
+        margin: -10px auto 0;
+    }
+
+    @media screen and (${device.mobileS}) {
+        font-size: 10px;
+        padding: 5px 16px;
     }
 `;

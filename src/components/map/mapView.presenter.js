@@ -1,17 +1,20 @@
 import { Spin } from "antd";
 import { CgMenuRound } from "react-icons/cg";
 import { IoMdCloseCircle } from "react-icons/io";
-import { CustomOverlayMap, Map, MapMarker, Polygon } from "react-kakao-maps-sdk";
+import { IoClose } from "react-icons/io5";
+import { CustomOverlayMap, Map, MapInfoWindow, MapMarker, Polygon } from "react-kakao-maps-sdk";
 import CategoryBox from "./categoryBox";
 import Header from "../common/header";
 import {
     Bar,
+    CategoryBoxWrap,
     CloseBtn,
     Container,
     DivArea,
     HeaderPartWrap,
     MapWrap,
     MenuBtn,
+    NameArea,
     Search,
     SideBar,
     SideWrap,
@@ -28,14 +31,23 @@ const MapViewUI = (props) => {
         waitBoxRef,
         infraBtnRef,
         clickCnt,
+        mapCenter,
+        mapLevel,
+        deviceWidth,
         dataInfo,
         polygonInfo,
+        clickedPloygon,
+        clickedMarker,
         selectedDong,
         selectedType,
         mousePosition,
         categoryList,
         markerSrc,
         setMap,
+        setPolygonInfo,
+        setClickedPolygon,
+        setClickedMarker,
+        setSelectedDong,
         setMousePosition,
         infraBtnClick,
         searchBtnClick,
@@ -58,7 +70,7 @@ const MapViewUI = (props) => {
                     </MenuBtn>
 
                     <SideBar ref={sideBarRef}>
-                        <div>
+                        <CategoryBoxWrap>
                             <CloseBtn onClick={() => sideBarShowCtrl(0)}>
                                 <IoMdCloseCircle size="20" />
                             </CloseBtn>
@@ -75,7 +87,7 @@ const MapViewUI = (props) => {
                                     infraBtnColorCtrl={infraBtnColorCtrl}
                                 />
                             ))}
-                        </div>
+                        </CategoryBoxWrap>
 
                         {isDongFind && <Search onClick={searchBtnClick}>검색</Search>}
                     </SideBar>
@@ -119,6 +131,26 @@ const MapViewUI = (props) => {
                                     fillOpacity={0.7} // 채우기 불투명도
                                     onMouseover={() => (info.isMouseOver = true)}
                                     onMouseout={() => (info.isMouseOver = false)}
+                                    onClick={(_, mouseEvent) => {
+                                        if (deviceWidth < 1024) {
+                                            selectedDong &&
+                                                setSelectedDong((prev) => [...prev.map((el) => ({ ...el, isMouseOver: false }))]);
+                                            setPolygonInfo((prev) => [
+                                                ...prev.filter((_, i) => i !== idx).map((el) => ({ ...el, isMouseOver: false })),
+                                                {
+                                                    ...prev[idx],
+                                                    isMouseOver: true,
+                                                },
+                                            ]);
+                                            setClickedPolygon({
+                                                position: {
+                                                    lat: mouseEvent.latLng.getLat(),
+                                                    lng: mouseEvent.latLng.getLng(),
+                                                },
+                                                dongName: info.dongName,
+                                            });
+                                        }
+                                    }}
                                 />
                             ))}
 
@@ -140,19 +172,57 @@ const MapViewUI = (props) => {
                                     fillOpacity={0.7}
                                     onMouseover={() => (info.isMouseOver = true)}
                                     onMouseout={() => (info.isMouseOver = false)}
+                                    onClick={(_, mouseEvent) => {
+                                        if (deviceWidth < 1024) {
+                                            setPolygonInfo((prev) => [...prev.map((el) => ({ ...el, isMouseOver: false }))]);
+                                            setSelectedDong((prev) => [
+                                                ...prev.filter((_, i) => i !== idx).map((el) => ({ ...el, isMouseOver: false })),
+                                                {
+                                                    ...prev[idx],
+                                                    isMouseOver: true,
+                                                },
+                                            ]);
+                                            setClickedPolygon({
+                                                position: {
+                                                    lat: mouseEvent.latLng.getLat(),
+                                                    lng: mouseEvent.latLng.getLng(),
+                                                },
+                                                dongName: info.dongName,
+                                            });
+                                        }
+                                    }}
                                 />
                             ))}
+
+                            {clickedPloygon && (
+                                <CustomOverlayMap position={clickedPloygon.position} yAnchor={1}>
+                                    <NameArea>
+                                        <p>{clickedPloygon.dongName}</p>
+                                        <IoClose
+                                            size="20"
+                                            onClick={() => {
+                                                setPolygonInfo((prev) => [...prev.map((el) => ({ ...el, isMouseOver: false }))]);
+                                                selectedDong &&
+                                                    setSelectedDong((prev) => [
+                                                        ...prev.map((el) => ({ ...el, isMouseOver: false })),
+                                                    ]);
+                                                setClickedPolygon(null);
+                                            }}
+                                        />
+                                    </NameArea>
+                                </CustomOverlayMap>
+                            )}
                         </>
                     ) : (
                         <>
                             <Polygon
-                                path={polygonInfo} // 그려질 다각형의 좌표 배열
-                                strokeWeight={2} // 선의 두께
-                                strokeColor={"#004c80"} // 선의 색깔
-                                strokeOpacity={0.8} // 선의 불투명도, 1에서 0 사이의 값이며 0에 가까울수록 투명
-                                strokeStyle={"solid"} // 선의 스타일
-                                fillColor={"#fff"} // 채우기 색깔
-                                fillOpacity={0.7} // 채우기 불투명도
+                                path={polygonInfo}
+                                strokeWeight={2}
+                                strokeColor={"#004c80"}
+                                strokeOpacity={0.8}
+                                strokeStyle={"solid"}
+                                fillColor={"#fff"}
+                                fillOpacity={0.7}
                             />
 
                             {selectedType.map((type) =>
@@ -161,9 +231,27 @@ const MapViewUI = (props) => {
                                         key={idx}
                                         position={el.position}
                                         title={el.infraName}
-                                        image={{ src: markerSrc[type], size: { width: 30 } }}
+                                        image={{
+                                            src: markerSrc[type],
+                                            size: { width: 30 },
+                                        }}
+                                        onClick={() => {
+                                            setClickedMarker({
+                                                position: el.position,
+                                                infraName: el.infraName,
+                                            });
+                                        }}
                                     />
                                 ))
+                            )}
+
+                            {clickedMarker && (
+                                <CustomOverlayMap position={clickedMarker.position} xAnchor={0.4} yAnchor={1.3}>
+                                    <NameArea>
+                                        <p>{clickedMarker.infraName}</p>
+                                        <IoClose size="20" onClick={() => setClickedMarker(null)} />
+                                    </NameArea>
+                                </CustomOverlayMap>
                             )}
                         </>
                     )}

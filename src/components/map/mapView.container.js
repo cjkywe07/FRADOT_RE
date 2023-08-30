@@ -15,6 +15,15 @@ const MapView = ({ isDongFind }) => {
     // 버튼 클릭 여부
     let clickCnt = useRef([0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
+    // 지도 중심 좌표
+    let mapCenter = useRef({});
+
+    // 지도 레벨
+    let mapLevel = useRef(0);
+
+    // 디바이스 너비
+    let deviceWidth = useRef(0);
+
     // useRef 여러 개 배열로 관리할 때 시설 종류 순서
     const typeName = ["lib", "park", "mar", "kid", "hos", "swim", "reh", "old", "col"];
 
@@ -51,6 +60,12 @@ const MapView = ({ isDongFind }) => {
     // 각 동의 폴리곤좌표, 동이름, 마우스오버여부 넣어줄 변수
     // (2) 인프라찾기 페이지라면, 서울시 폴리곤 그리기 위해 서울시 폴리곤 좌표 넣어줄 변수
     const [polygonInfo, setPolygonInfo] = useState([]);
+
+    // 클릭된 폴리곤 위치 및 동이름 개체 형태로 저장할 변수
+    const [clickedPloygon, setClickedPolygon] = useState(null);
+
+    // 클릭된 좌표 위치 및 인프라이름 개체 형태로 저장할 변수
+    const [clickedMarker, setClickedMarker] = useState(null);
 
     // 빨갛게 표시할 동의 폴리곤 정보 넣어줄 변수
     const [selectedDong, setSelectedDong] = useState([]);
@@ -100,19 +115,84 @@ const MapView = ({ isDongFind }) => {
         kid: "/kid_marker.png",
     };
 
+    useEffect(() => {
+        deviceWidth.current = window.innerWidth;
+
+        // // mapLevel -> 모바일 10 / 태블릿, 노트북 9 / 데스크탑
+        // if (deviceWidth.current >= 1920){
+        //     mapCenter.current = {
+        //         lat: 37.573423,
+        //         lng: 126.923589,
+        //     };
+        //     mapLevel.current = 8;
+        // }
+        // // laptopM 이상
+        // else if (deviceWidth.current >= 1280) {
+        //     mapCenter.current = {
+        //         lat: 37.573423,
+        //         lng: 126.923589,
+        //     };
+        //     mapLevel.current = 9;
+        // }
+        // // laptopS
+        // else if (deviceWidth.current >= 1024) {
+        //     mapCenter = {
+        //         lat: 37.57922539845886,
+        //         lng: 126.85543171306287,
+        //     };
+        //     mapLevel = 9;
+        // }
+        // // tablet
+        // else if (deviceWidth.current >= 768) {
+        //     // mapCenter = {
+        //     //     lat: 37.58370422449079,
+        //     //     lng: 126.86375575244594,
+        //     // };
+        //     mapLevel = 0;
+        // }
+        // // mobileML
+        // else if (deviceWidth.current >= 375) {
+        //     mapCenter = 0;
+        //     mapLevel = 0;
+        // }
+        // // mobileS
+        // else {
+        //     mapCenter = 0;
+        //     mapLevel = 0;
+        // }
+    }, []);
+
     // 데이터 요청
     useEffect(() => {
         axios
             .all([
-                axios.get(`http://openapi.seoul.go.kr:8088/576e61714e636a6b3637545a455046/json/TvEmgcHospitalInfo/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/4f49455041636a6b37376d485a5255/json/SeoulPublicLibraryInfo/1/500/`),
-                axios.get(`http://openAPI.seoul.go.kr:8088/517a63584d636a6b313035634b614f49/json/SearchParkInfoService/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/4b71786173636a6b37374d67555364/json/LOCALDATA_103501/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/6c79444366636a6b3131327867626b42/json/SebcCollegeInfoKor/1/500/`),
-                axios.get(`http://openAPI.seoul.go.kr:8088/6f5a474451636a6b3132336871466674/json/ListTraditionalMarket/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/4561544d6d636a6b3130366f50625644/json/fcltOpenInfo_OMSI/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/615a696145636a6b3131394f6e4c5341/json/fcltOpenInfo_OWI/1/500/`),
-                axios.get(`http://openapi.seoul.go.kr:8088/495057734c636a6b313137556c4b777a/json/tnFcltySttusInfo1011/1/500/`),
+                axios.get(
+                    `http://openapi.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_HOSPITAL_OPEN_API_KEY}/json/TvEmgcHospitalInfo/1/500/`
+                ),
+                axios.get(
+                    `http://openapi.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_LIBRARY_OPEN_API_KEY}/json/SeoulPublicLibraryInfo/1/500/`
+                ),
+                axios.get(
+                    `http://openAPI.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_PARK_OPEN_API_KEY}/json/SearchParkInfoService/1/500/`
+                ),
+                axios.get(
+                    `http://openapi.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_SWIMMINGPOOL_OPEN_API_KEY}/json/LOCALDATA_103501/1/500/`
+                ),
+                axios.get(
+                    `http://openapi.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_COLLEGE_OPEN_API_KEY}/json/SebcCollegeInfoKor/1/500/`
+                ),
+                axios.get(
+                    `http://openAPI.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_MARKET_OPEN_API_KEY}/json/ListTraditionalMarket/1/500/`
+                ),
+                axios.get(
+                    `http://openapi.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_REHABILITATIONCENTER_OPEN_API_KEY}/json/fcltOpenInfo_OMSI/1/500/`
+                ),
+                axios.get(
+                    `http://openapi.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_SENIORCENTER_OPEN_API_KEY}/json/fcltOpenInfo_OWI/1/500/`
+                ),
+                axios.get(
+                    `http://openapi.seoul.go.kr:8088/${process.env.NEXT_PUBLIC_KIDSCAFE_OPEN_API_KEY}/json/tnFcltySttusInfo1011/1/500/`
+                ),
             ])
             .then(
                 axios.spread((hos, lib, park, swim, col, mar, reh, old, kid) => {
@@ -190,7 +270,7 @@ const MapView = ({ isDongFind }) => {
         if (elem[addrKey]) {
             let res = await axios.get(`https://dapi.kakao.com/v2/local/search/address.json?query=${elem[addrKey]}`, {
                 headers: {
-                    Authorization: "KakaoAK c810d1096c3f50297a4f3e8323afece5",
+                    Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_MAP_REST_API_KEY}`,
                 },
             });
 
@@ -287,6 +367,8 @@ const MapView = ({ isDongFind }) => {
             setSelectedType((prevSelectedType) => {
                 return prevSelectedType.filter((t) => t !== typeName[typeIdx]);
             });
+
+            setClickedMarker(null);
         }
     };
 
@@ -329,7 +411,7 @@ const MapView = ({ isDongFind }) => {
 
     // 헤더 마우스 오버 / 마우스 아웃
     const headerShowCtrl = (isMouseOver) => {
-        headerRef.current.style.transform = isMouseOver ? "translateY(0)" : "translateY(-60px)";
+        headerRef.current.style.top = isMouseOver ? "0" : "-60px";
         barRef.current.style.visibility = isMouseOver ? "hidden" : "visible";
         barRef.current.style.transitionDelay = isMouseOver ? "0ms" : "300ms";
     };
@@ -358,16 +440,25 @@ const MapView = ({ isDongFind }) => {
             menuBtnRef={menuBtnRef}
             sideBarRef={sideBarRef}
             waitBoxRef={waitBoxRef}
-            infraBtnRef={infraBtnRef}
-            clickCnt={clickCnt}
+            infraBtnRef={infraBtnRef.current}
+            clickCnt={clickCnt.current}
+            mapCenter={mapCenter.current}
+            mapLevel={mapLevel.current}
+            deviceWidth={deviceWidth.current}
             dataInfo={dataInfo}
             polygonInfo={polygonInfo}
+            clickedPloygon={clickedPloygon}
+            clickedMarker={clickedMarker}
             selectedDong={selectedDong}
             selectedType={selectedType}
             mousePosition={mousePosition}
             categoryList={categoryList}
             markerSrc={markerSrc}
             setMap={setMap}
+            setPolygonInfo={setPolygonInfo}
+            setClickedPolygon={setClickedPolygon}
+            setClickedMarker={setClickedMarker}
+            setSelectedDong={setSelectedDong}
             setMousePosition={setMousePosition}
             infraBtnClick={infraBtnClick}
             searchBtnClick={searchBtnClick}

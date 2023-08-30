@@ -1,24 +1,38 @@
 import styled from "@emotion/styled";
+import { device } from "../global.styles";
+
+export const FooterContainer = styled.div`
+    width: 100%;
+`;
 
 export const FooterWrap = styled.div`
-    width: 1200px;
-    height: 300px;
-    margin: 20px auto 0;
+    width: 95%;
+    height: 280px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    @media screen and (${device.mobileML}) {
+        height: 240px;
+    }
 `;
 
 export const Img = styled.div`
     background: url("/logo.png") no-repeat center / contain;
     width: 200px;
     height: 100px;
+
+    @media screen and (${device.mobileML}) {
+        width: 140px;
+        height: 70px;
+    }
 `;
 
 export const Line = styled.div`
     border-bottom: 1px solid black;
-    width: 1000px;
+    width: 90%;
 `;
 
 export const Info = styled.div`
@@ -32,9 +46,22 @@ export const Info = styled.div`
     justify-content: center;
     align-items: center;
     gap: 0px 17px;
+
+    @media screen and (${device.mobileML}) {
+        height: 120px;
+        padding-top: 20px;
+    }
+
+    @media screen and (${device.mobileS}) {
+        width: 320px;
+    }
 `;
 
-export const In = styled.div``;
+export const In = styled.div`
+    @media screen and (${device.mobileS}) {
+        font-size: 12px;
+    }
+`;
 
 export const TopBtn = styled.div`
     width: 60px;
@@ -50,14 +77,20 @@ export const TopBtn = styled.div`
     bottom: 20px;
     right: 15%;
     opacity: 0;
-    z-index: 100;
 
     &:hover {
         background-color: #6257ff;
     }
 
-    & > p:first-of-type {
+    p:first-of-type {
         font-size: 10px;
         line-height: 10px;
+    }
+
+    @media screen and (${device.mobileML}) {
+        width: 40px;
+        height: 40px;
+        right: 10%;
+        font-size: 12px;
     }
 `;
