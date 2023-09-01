@@ -16,10 +16,8 @@ import { forwardRef, useRef, useState } from "react";
 const Header = forwardRef((props, headerRef) => {
     let { onClickMoveToPage } = useMovetoPage();
 
-    // let clickCnt = useRef(0);
     let menuRef = useRef(null);
     let backGroundRef = useRef(null);
-
     const [isMenuActive, setisMenuActive] = useState(false);
 
     const nav = [
@@ -37,8 +35,6 @@ const Header = forwardRef((props, headerRef) => {
 
     return (
         <HeaderContainer ref={headerRef} isMapHeader={props.isMapHeader}>
-            {/* <button onClick={() => console.log(props.isMapHeader)}>버튼</button> */}
-
             <HeaderWrap isMapHeader={props.isMapHeader}>
                 <Img onClick={onClickMoveToPage("/")} isMapHeader={props.isMapHeader}></Img>
 

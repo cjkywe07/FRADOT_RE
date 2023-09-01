@@ -2,7 +2,7 @@ import { Spin } from "antd";
 import { CgMenuRound } from "react-icons/cg";
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
-import { CustomOverlayMap, Map, MapInfoWindow, MapMarker, Polygon } from "react-kakao-maps-sdk";
+import { CustomOverlayMap, Map, MapMarker, Polygon } from "react-kakao-maps-sdk";
 import CategoryBox from "./categoryBox";
 import Header from "../common/header";
 import {
@@ -20,6 +20,7 @@ import {
     SideWrap,
     WaitBox,
 } from "@/styles/map.styles";
+import { useState } from "react";
 
 const MapViewUI = (props) => {
     const {
@@ -33,7 +34,7 @@ const MapViewUI = (props) => {
         clickCnt,
         mapCenter,
         mapLevel,
-        deviceWidth,
+        mapMaxLevel,
         dataInfo,
         polygonInfo,
         clickedPloygon,
@@ -56,6 +57,8 @@ const MapViewUI = (props) => {
         infraBtnColorCtrl,
     } = props;
 
+    const [position, setPosition] = useState({ lat: 0, lng: 0 });
+
     return (
         <Container>
             <MapWrap>
@@ -72,7 +75,7 @@ const MapViewUI = (props) => {
                     <SideBar ref={sideBarRef}>
                         <CategoryBoxWrap>
                             <CloseBtn onClick={() => sideBarShowCtrl(0)}>
-                                <IoMdCloseCircle size="20" />
+                                <IoMdCloseCircle size="23" />
                             </CloseBtn>
 
                             {categoryList.map((category, idx) => (
@@ -95,17 +98,14 @@ const MapViewUI = (props) => {
 
                 <Map
                     id={`map`}
-                    center={{
-                        lat: 37.573423,
-                        lng: 126.923589,
-                    }}
+                    center={mapCenter}
                     style={{
                         width: "100%",
                         height: "100vh",
                         position: "absolute",
                     }}
-                    level={9}
-                    maxLevel={9}
+                    level={mapLevel}
+                    maxLevel={mapMaxLevel}
                     onCreate={setMap}
                     onMouseMove={
                         isDongFind
@@ -132,33 +132,25 @@ const MapViewUI = (props) => {
                                     onMouseover={() => (info.isMouseOver = true)}
                                     onMouseout={() => (info.isMouseOver = false)}
                                     onClick={(_, mouseEvent) => {
-                                        if (deviceWidth < 1024) {
-                                            selectedDong &&
-                                                setSelectedDong((prev) => [...prev.map((el) => ({ ...el, isMouseOver: false }))]);
-                                            setPolygonInfo((prev) => [
-                                                ...prev.filter((_, i) => i !== idx).map((el) => ({ ...el, isMouseOver: false })),
-                                                {
-                                                    ...prev[idx],
-                                                    isMouseOver: true,
-                                                },
-                                            ]);
-                                            setClickedPolygon({
-                                                position: {
-                                                    lat: mouseEvent.latLng.getLat(),
-                                                    lng: mouseEvent.latLng.getLng(),
-                                                },
-                                                dongName: info.dongName,
-                                            });
-                                        }
+                                        selectedDong &&
+                                            setSelectedDong((prev) => [...prev.map((el) => ({ ...el, isMouseOver: false }))]);
+                                        setPolygonInfo((prev) => [
+                                            ...prev.filter((_, i) => i !== idx).map((el) => ({ ...el, isMouseOver: false })),
+                                            {
+                                                ...prev[idx],
+                                                isMouseOver: true,
+                                            },
+                                        ]);
+                                        setClickedPolygon({
+                                            position: {
+                                                lat: mouseEvent.latLng.getLat(),
+                                                lng: mouseEvent.latLng.getLng(),
+                                            },
+                                            dongName: info.dongName,
+                                        });
                                     }}
                                 />
                             ))}
-
-                            {polygonInfo.findIndex((v) => v.isMouseOver) !== -1 && (
-                                <CustomOverlayMap position={mousePosition}>
-                                    <DivArea>{polygonInfo.find((v) => v.isMouseOver).dongName}</DivArea>
-                                </CustomOverlayMap>
-                            )}
 
                             {selectedDong.map((info, idx) => (
                                 <Polygon
@@ -173,26 +165,36 @@ const MapViewUI = (props) => {
                                     onMouseover={() => (info.isMouseOver = true)}
                                     onMouseout={() => (info.isMouseOver = false)}
                                     onClick={(_, mouseEvent) => {
-                                        if (deviceWidth < 1024) {
-                                            setPolygonInfo((prev) => [...prev.map((el) => ({ ...el, isMouseOver: false }))]);
-                                            setSelectedDong((prev) => [
-                                                ...prev.filter((_, i) => i !== idx).map((el) => ({ ...el, isMouseOver: false })),
-                                                {
-                                                    ...prev[idx],
-                                                    isMouseOver: true,
-                                                },
-                                            ]);
-                                            setClickedPolygon({
-                                                position: {
-                                                    lat: mouseEvent.latLng.getLat(),
-                                                    lng: mouseEvent.latLng.getLng(),
-                                                },
-                                                dongName: info.dongName,
-                                            });
-                                        }
+                                        setPolygonInfo((prev) => [...prev.map((el) => ({ ...el, isMouseOver: false }))]);
+                                        setSelectedDong((prev) => [
+                                            ...prev.filter((_, i) => i !== idx).map((el) => ({ ...el, isMouseOver: false })),
+                                            {
+                                                ...prev[idx],
+                                                isMouseOver: true,
+                                            },
+                                        ]);
+                                        setClickedPolygon({
+                                            position: {
+                                                lat: mouseEvent.latLng.getLat(),
+                                                lng: mouseEvent.latLng.getLng(),
+                                            },
+                                            dongName: info.dongName,
+                                        });
                                     }}
                                 />
                             ))}
+
+                            {polygonInfo.findIndex((v) => v.isMouseOver) !== -1 && (
+                                <CustomOverlayMap position={mousePosition}>
+                                    <DivArea>{polygonInfo.find((v) => v.isMouseOver).dongName}</DivArea>
+                                </CustomOverlayMap>
+                            )}
+
+                            {selectedDong.findIndex((v) => v.isMouseOver) !== -1 && (
+                                <CustomOverlayMap position={mousePosition}>
+                                    <DivArea>{selectedDong.find((v) => v.isMouseOver).dongName}</DivArea>
+                                </CustomOverlayMap>
+                            )}
 
                             {clickedPloygon && (
                                 <CustomOverlayMap position={clickedPloygon.position} yAnchor={1}>

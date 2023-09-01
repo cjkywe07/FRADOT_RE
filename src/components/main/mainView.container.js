@@ -19,24 +19,25 @@ const MainView = () => {
     useEffect(() => {
         let firstTabPartScrollY = 0;
         let secondTabPartScrollY = 0;
+        let deviceWidth = window.innerWidth;
 
         // laptopM 이상
-        if (window.innerWidth >= 1280) {
+        if (deviceWidth >= 1280) {
             firstTabPartScrollY = 500;
             secondTabPartScrollY = 1541;
         }
         // laptopS
-        else if (window.innerWidth >= 1024) {
+        else if (deviceWidth >= 1024) {
             firstTabPartScrollY = 500;
             secondTabPartScrollY = 1459;
         }
         // tablet
-        else if (window.innerWidth >= 768) {
+        else if (deviceWidth >= 768) {
             firstTabPartScrollY = 450;
             secondTabPartScrollY = 1760;
         }
         // mobileML
-        else if (window.innerWidth >= 375) {
+        else if (deviceWidth >= 375) {
             firstTabPartScrollY = 250;
             secondTabPartScrollY = 998;
         }

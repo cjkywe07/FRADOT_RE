@@ -134,6 +134,15 @@ export const Text = styled.div`
             font-size: 15px;
         }
     }
+
+    @media screen and (max-width: 319px) {
+        h1 {
+            font-size: 25px;
+        }
+        p {
+            font-size: 14px;
+        }
+    }
 `;
 
 export const ExplainContainer = styled.div``;
@@ -288,6 +297,11 @@ export const ImgWrap = styled.div`
     @media screen and (${device.mobileS}) {
         width: 280px;
         height: 146px;
+    }
+
+    @media screen and (max-width: 319px) {
+        width: 230px;
+        height: 120px;
     }
 `;
 

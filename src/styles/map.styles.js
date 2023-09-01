@@ -52,7 +52,7 @@ export const SideBar = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 40px;
+    row-gap: 40px;
     z-index: 100;
 
     &::-webkit-scrollbar {
@@ -60,17 +60,27 @@ export const SideBar = styled.div`
     }
 
     @media screen and (${device.mobileML}) {
-        font-size: 11px;
-        padding: 6px 18px;
-        margin: 0;
-        width: 100%;
+        padding: 16px;
+        padding-top: 12px;
+    }
+
+    @media screen and (max-width: 500px) {
+        width: calc(100% - 30px);
+        height: calc(50vh);
+        margin: 0 auto;
         position: fixed;
-        bottom: 0;
-        height: calc(100vh - 300px);
+        bottom: 15px;
+        left: 15px;
     }
 `;
 
-export const CategoryBoxWrap = styled.div``;
+export const CategoryBoxWrap = styled.div`
+    @media screen and (${device.mobileML}) {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+`;
 
 export const CloseBtn = styled.div`
     position: absolute;
@@ -83,28 +93,28 @@ export const Category = styled.div`
     padding: 10px;
 
     @media screen and (${device.mobileML}) {
-        padding: 5px 5px 5px 5px;
-        margin: 1px;
-        width: 45vw;
-        &:nth-child(2n) {
-            margin-left: 1px;
-        }
+        width: 50%;
+        padding: 10px 5px;
     }
 `;
 
 export const CateTitle = styled.h2`
     margin-bottom: 5px;
+
+    @media screen and (${device.mobileML}) {
+        font-size: 16px;
+    }
 `;
 
 export const InfraBtnWrap = styled.div`
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    padding: 0 5px;
+    margin: 0 5px;
 
     @media screen and (${device.mobileML}) {
-        padding: 3px;
-        width: 95%;
+        justify-content: start;
+        margin: 0;
     }
 `;
 
@@ -120,12 +130,11 @@ export const Infra = styled.button`
     cursor: pointer;
 
     @media screen and (${device.mobileML}) {
-        font-size: 11px;
-        padding: 7px 3px;
-        width: 70px;
-        &:nth-child(2) {
-            margin-left: 1px;
-        }
+        width: 68px;
+        margin: 5px;
+        margin-left: 0;
+        padding: 6px 0;
+        font-size: 12px;
     }
 `;
 
@@ -135,8 +144,9 @@ export const Search = styled.button`
     border-radius: 5px;
     border: none;
     background-color: #756bff;
-    width: 260px;
+    width: calc(100% - 10px);
     padding: 10px;
+    margin: 0 auto;
     color: white;
     cursor: pointer;
 
@@ -145,7 +155,7 @@ export const Search = styled.button`
     }
 
     @media screen and (${device.mobileML}) {
-        margin: 20px auto;
+        font-size: 16px;
     }
 `;
 
