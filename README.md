@@ -14,13 +14,13 @@ FRADOT 서비스는 서울시 공공데이터를 사용하여 만든 웹사이�
 2. 서울시 내에 사용자가 원하는 인프라의 위치 및 이름을 알려준다.
 
 위의 기능들을 사용하여 사용자는 주거지를 선택할 때 손쉽게 원하는 시설들을 갖춘 동네를 찾을 수 있다.  
-또한 시설들의 위치를 한눈에 볼 수 있어 도시개발, 인프라 시설 추가계획에 도움이 될 수 있다.<br>
+또한 시설들의 위치를 한눈에 볼 수 있어 도시개발, 인프라 시설 추가 계획에 도움이 될 수 있다.<br>
 
-#### 1차
+#### 1차 진행
 - [FRADOT 1차 깃허브 이동](https://github.com/Frot-Team1/FRADOT)
 
-#### 2차 추가 기능
-- 반응형 구현
+#### 2차 진행
+- 반응형 추가 구현
 
 ## ⏱ 개발 기간
 - 1차 : 23.03.31 ~ 23.05.30
@@ -44,36 +44,60 @@ $ yarn dev
 ```
 
 ## 💻 기능 및 화면 소개
-#### 동네찾기 페이지
+### 동네찾기 페이지
 - 선택된 인프라 시설이 모두 위치하는 지역 붉게 표시
-- 해당 지역에 마우스 커서 올리면 동 이름 표시
+- 해당 지역을 클릭하면 동 이름 표시
 
-  <div>
-    <img width="600" src="./public/map1_1.jpg" alt="dongFindPage1">
-  </div>
-  <div>
-    <img width="600" src="./public/map1_2.jpg" alt="dongFindPage2">
-  </div>
+  - #### 웹
+    <div>
+      <img width="600" src="./public/map1-1.jpg" alt="dongFindPage1">
+    </div>
+    <div>
+      <img width="600" src="./public/map1-2.jpg" alt="dongFindPage2">
+    </div>
+  
+  - #### 모바일
+    <div>
+      <img width="250" src="./public/map1-mobile.jpg" alt="dongFindPage-m">
+    </div>
 
-#### 인프라찾기 페이지
+### 인프라찾기 페이지
 - 선택된 인프라 시설의 위치를 마커로 표시
-- 해당 마커에 마우스 커서 올리면 인프라 시설 이름 표시
+- 해당 마커를 클릭하면 인프라 시설 이름 표시
 
+  - #### 웹
+    <div>
+      <img width="600" src="./public/map2-1.jpg" alt="infraFindPage1">
+    </div>
+    <div>
+      <img width="600" src="./public/map2-2.jpg" alt="infraFindPage2">
+    </div>
+    
+  - #### 모바일
+    <div>
+      <img width="250" src="./public/map2-mobile.jpg" alt="infraFindPage-m">
+    </div>
+
+### 메인 페이지
+- #### 웹
   <div>
-    <img width="600" src="./public/map2_1.jpg" alt="infraFindPage1">
+    <img width="600" src="./public/mainPage.png" alt="mainPage">
   </div>
+  
+- #### 모바일
   <div>
-    <img width="600" src="./public/map2_2.jpg" alt="infraFindPage2">
+    <img width="250" src="./public/mainPage-mobile.png" alt="mainPage-m">
   </div>
 
-#### 메인 페이지
-- <div>
-<!--     <img width="600" src="./public/mainPage.png" alt="mainPage"> -->
+### 어바웃어스 페이지
+- #### 웹
+  <div>
+    <img width="600" src="./public/aboutUsPage.png" alt="aboutUsPage">
   </div>
 
-#### 어바웃어스 페이지
-- <div>
-<!--     <img width="600" src="./public/aboutUsPage.png" alt="aboutUsPage"> -->
+- #### 모바일
+  <div>
+    <img width="250" src="./public/aboutUsPage-mobile.png" alt="aboutUsPage-m">
   </div>
 
 ## ⚙ Stacks
