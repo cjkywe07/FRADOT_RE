@@ -55,6 +55,10 @@ export const Info = styled.div`
     @media screen and (${device.mobileS}) {
         width: 320px;
     }
+
+    @media screen and (max-width: 319px) {
+        width: 280px;
+    }
 `;
 
 export const In = styled.div`

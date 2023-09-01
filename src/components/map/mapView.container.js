@@ -18,8 +18,11 @@ const MapView = ({ isDongFind }) => {
     // 지도 중심 좌표
     let mapCenter = useRef({});
 
-    // 지도 레벨
+    // 지도 레벨 (1-확대 ~ 14-축소)
     let mapLevel = useRef(0);
+
+    // 지도 최대 레벨 (해당 레벨까지만 축소 가능)
+    let mapMaxLevel = useRef(0);
 
     // 디바이스 너비
     let deviceWidth = useRef(0);
@@ -118,48 +121,60 @@ const MapView = ({ isDongFind }) => {
     useEffect(() => {
         deviceWidth.current = window.innerWidth;
 
-        // // mapLevel -> 모바일 10 / 태블릿, 노트북 9 / 데스크탑
-        // if (deviceWidth.current >= 1920){
-        //     mapCenter.current = {
-        //         lat: 37.573423,
-        //         lng: 126.923589,
-        //     };
-        //     mapLevel.current = 8;
-        // }
-        // // laptopM 이상
-        // else if (deviceWidth.current >= 1280) {
-        //     mapCenter.current = {
-        //         lat: 37.573423,
-        //         lng: 126.923589,
-        //     };
-        //     mapLevel.current = 9;
-        // }
-        // // laptopS
-        // else if (deviceWidth.current >= 1024) {
-        //     mapCenter = {
-        //         lat: 37.57922539845886,
-        //         lng: 126.85543171306287,
-        //     };
-        //     mapLevel = 9;
-        // }
-        // // tablet
-        // else if (deviceWidth.current >= 768) {
-        //     // mapCenter = {
-        //     //     lat: 37.58370422449079,
-        //     //     lng: 126.86375575244594,
-        //     // };
-        //     mapLevel = 0;
-        // }
-        // // mobileML
-        // else if (deviceWidth.current >= 375) {
-        //     mapCenter = 0;
-        //     mapLevel = 0;
-        // }
-        // // mobileS
-        // else {
-        //     mapCenter = 0;
-        //     mapLevel = 0;
-        // }
+        // laptopL 이상
+        if (deviceWidth.current >= 1440) {
+            mapCenter.current = {
+                lat: 37.56941864715408,
+                lng: 126.94820220092218,
+            };
+            mapLevel.current = 8;
+            mapMaxLevel.current = 9;
+        }
+        // laptopM 이상
+        else if (deviceWidth.current >= 1280) {
+            mapCenter.current = {
+                lat: 37.57387951153463,
+                lng: 126.93226037815042,
+            };
+            mapLevel.current = 9;
+            mapMaxLevel.current = 9;
+        }
+        // laptopS 이상
+        else if (deviceWidth.current >= 1024) {
+            mapCenter.current = {
+                lat: 37.567747636518355,
+                lng: 126.84895668554132,
+            };
+            mapLevel.current = 9;
+            mapMaxLevel.current = 9;
+        }
+        // tablet
+        else if (deviceWidth.current >= 768) {
+            mapCenter.current = {
+                lat: 37.561473618830846,
+                lng: 126.91923299363279,
+            };
+            mapLevel.current = 9;
+            mapMaxLevel.current = 9;
+        }
+        // mobile landscape
+        else if (deviceWidth.current >= 650) {
+            mapCenter.current = {
+                lat: 37.579925072653054,
+                lng: 126.72648394495523,
+            };
+            mapLevel.current = 10;
+            mapMaxLevel.current = 10;
+        }
+        // mobileML 이하
+        else {
+            mapCenter.current = {
+                lat: 37.383027441863184,
+                lng: 126.98012718525638,
+            };
+            mapLevel.current = 10;
+            mapMaxLevel.current = 10;
+        }
     }, []);
 
     // 데이터 요청
@@ -418,7 +433,11 @@ const MapView = ({ isDongFind }) => {
 
     // 사이드바 열기 / 닫기
     const sideBarShowCtrl = (isMenuBtnCliked) => {
-        sideBarRef.current.style.transform = isMenuBtnCliked ? "translateX(0)" : "translateX(-350px)";
+        if (deviceWidth.current <= 500) {
+            sideBarRef.current.style.transform = isMenuBtnCliked ? "translateX(0)" : "translateX(-500px)";
+        } else {
+            sideBarRef.current.style.transform = isMenuBtnCliked ? "translateX(0)" : "translateX(-350px)";
+        }
         menuBtnRef.current.style.visibility = isMenuBtnCliked ? "hidden" : "visible";
         menuBtnRef.current.style.transitionDelay = isMenuBtnCliked ? "0ms" : "1000ms";
     };
@@ -444,7 +463,7 @@ const MapView = ({ isDongFind }) => {
             clickCnt={clickCnt.current}
             mapCenter={mapCenter.current}
             mapLevel={mapLevel.current}
-            deviceWidth={deviceWidth.current}
+            mapMaxLevel={mapMaxLevel.current}
             dataInfo={dataInfo}
             polygonInfo={polygonInfo}
             clickedPloygon={clickedPloygon}
@@ -465,6 +484,7 @@ const MapView = ({ isDongFind }) => {
             headerShowCtrl={headerShowCtrl}
             sideBarShowCtrl={sideBarShowCtrl}
             infraBtnColorCtrl={infraBtnColorCtrl}
+            deviceWidth={deviceWidth.current}
         />
     );
 };

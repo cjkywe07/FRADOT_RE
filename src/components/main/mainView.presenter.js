@@ -68,7 +68,7 @@ const MainViewUI = (props) => {
                         <ExplainItemWrap>
                             <ExplainItem>
                                 <ImgWrap isFirstPart>
-                                    <Img src="/map1_1.jpg" />
+                                    <Img src="/map1-1.jpg" />
                                 </ImgWrap>
 
                                 <StepText isFirstPart>
@@ -79,13 +79,13 @@ const MainViewUI = (props) => {
 
                             <ExplainItem>
                                 <ImgWrap isFirstPart>
-                                    <Img src="/map1_2.jpg" />
+                                    <Img src="/map1-2.jpg" />
                                 </ImgWrap>
 
                                 <StepText isFirstPart>
                                     <h2>Step 2.</h2>
                                     <p>
-                                        붉게 표시된 지역에 마우스를 올려
+                                        붉게 표시된 지역을 클릭하여
                                         <br />
                                         해당 인프라 시설들이 모여있는 동을 확인합니다.
                                     </p>
@@ -113,7 +113,7 @@ const MainViewUI = (props) => {
                         <ExplainItemWrap>
                             <ExplainItem>
                                 <ImgWrap>
-                                    <Img src="/map2_1.jpg" />
+                                    <Img src="/map2-1.jpg" />
                                 </ImgWrap>
 
                                 <StepText>
@@ -124,7 +124,7 @@ const MainViewUI = (props) => {
 
                             <ExplainItem>
                                 <ImgWrap>
-                                    <Img src="/map2_2.jpg" />
+                                    <Img src="/map2-2.jpg" />
                                 </ImgWrap>
 
                                 <StepText>
@@ -132,7 +132,7 @@ const MainViewUI = (props) => {
                                     <p>
                                         해당 시설의 위치가 표시되면
                                         <br />
-                                        마커에 마우스를 올려 시설명을 확인합니다.
+                                        마커를 클릭하여 시설명을 확인합니다.
                                     </p>
                                 </StepText>
                             </ExplainItem>
