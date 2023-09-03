@@ -484,7 +484,6 @@ const MapView = ({ isDongFind }) => {
             headerShowCtrl={headerShowCtrl}
             sideBarShowCtrl={sideBarShowCtrl}
             infraBtnColorCtrl={infraBtnColorCtrl}
-            deviceWidth={deviceWidth.current}
         />
     );
 };
