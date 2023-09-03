@@ -20,7 +20,6 @@ import {
     SideWrap,
     WaitBox,
 } from "@/styles/map.styles";
-import { useState } from "react";
 
 const MapViewUI = (props) => {
     const {
@@ -56,8 +55,6 @@ const MapViewUI = (props) => {
         sideBarShowCtrl,
         infraBtnColorCtrl,
     } = props;
-
-    const [position, setPosition] = useState({ lat: 0, lng: 0 });
 
     return (
         <Container>
