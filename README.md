@@ -27,9 +27,9 @@ FRADOT 서비스는 서울시 공공데이터를 사용하여 만든 웹사이�
 - 2차 : 23.07.27 ~ 23.08.31
 
 ## 🧑 팀원 소개 ‍ 
-- 팀원 : 김재하
-- 팀원 : 김규홍
-- 팀원 : 최지원
+- 팀원 : [jjaehha](https://github.com/jjaehha)
+- 팀원 : [rtttr1](https://github.com/rtttr1)
+- 팀원 : [cjkywe07](https://github.com/cjkywe07)
 
 ## 📃시작 가이드
 ### 다운로드 파일
